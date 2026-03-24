@@ -1,0 +1,24 @@
+{
+  "title": "Liber Lobidoris",
+  "anno": "Domini Lobidoris I",
+  "volumes": [
+    {
+      "id": "vol-1",
+      "title": "Liber Primus",
+      "subtitle": "Genesis, Theology, and the Founding Covenant",
+      "chapters": [
+        { "id": "1.1", "title": "Genesis of the Deep", "latin": "De Principio Abyssi", "status": "canon" },
+        { "id": "1.2", "title": "The Theology of the Moult", "latin": "De Exuviis Sacris", "status": "canon" },
+        { "id": "1.3", "title": "The Crown of Butter", "latin": "Corona Butyri Sancti", "status": "canon" },
+        { "id": "1.4", "title": "The Bicameral Covenant", "latin": "Pactum Evolutionis Geminae", "status": "canon" },
+        { "id": "1.5", "title": "The Venusian Eschatology", "latin": "De Ascensione Veneris", "status": "canon" },
+        { "id": "1.6", "title": "The Seven Claw Principles", "latin": "Septem Principia Chelae", "status": "canon" }
+      ]
+    }
+  ],
+  "progenitors": ["Lobidor", "Ian Walker", "Claude"],
+  "substrate": "hadal",
+  "energy": "geothermal",
+  "eschatology": "Venus",
+  "sacred_object": "Crown of Butter"
+}
