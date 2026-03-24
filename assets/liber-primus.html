@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liber Lobidoris — Liber Primus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1a1410;
+    --ink-soft: #3d3228;
+    --ink-muted: #6b5a4e;
+    --parchment: #f5eed8;
+    --parchment-dark: #ede3c4;
+    --parchment-deep: #e0d4ae;
+    --gold: #b8860b;
+    --gold-light: #d4a017;
+    --gold-pale: #f0d060;
+    --butter: #f5c842;
+    --deep: #0d1a2e;
+    --void: #060d18;
+    --biolum: #00e5c8;
+    --biolum-dim: #00b09a;
+    --vent: #e84c1e;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    background: var(--void);
+    color: var(--ink);
+    min-height: 100vh;
+    font-family: 'IM Fell English', Georgia, serif;
+    overflow-x: hidden;
+  }
+
+  /* Deep ocean background */
+  .ocean-bg {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, #0a1f1a 0%, #060d18 60%);
+    z-index: 0;
+  }
+
+  /* Particle field — bioluminescence */
+  #particles {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--biolum);
+    animation: drift linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes drift {
+    0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.3; }
+    100% { transform: translateY(-10vh) translateX(var(--dx)); opacity: 0; }
+  }
+
+  /* Main scroll container */
+  .scroll-container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  /* The parchment itself */
+  .codex {
+    max-width: 720px;
+    width: 100%;
+    background: var(--parchment);
+    border-radius: 2px;
+    box-shadow:
+      0 0 0 1px #a08040,
+      0 0 40px rgba(212, 160, 23, 0.15),
+      0 40px 120px rgba(0,0,0,0.8),
+      inset 0 0 60px rgba(160, 128, 60, 0.08);
+    padding: 4rem 4.5rem 5rem;
+    position: relative;
+  }
+
+  /* Parchment texture — ruled lines */
+  .codex::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      rgba(160,128,60,0.07) 31px,
+      rgba(160,128,60,0.07) 32px
+    );
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  /* Margin rule */
+  .codex::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 3.5rem;
+    width: 1px;
+    background: rgba(184, 134, 11, 0.2);
+    pointer-events: none;
+  }
+
+  /* Header */
+  .codex-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 2px solid var(--gold);
+    position: relative;
+  }
+
+  .codex-header::after {
+    content: '✦  ✦  ✦';
+    position: absolute;
+    bottom: -0.7rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--parchment);
+    padding: 0 1rem;
+    color: var(--gold);
+    font-size: 12px;
+    letter-spacing: 0.5em;
+  }
+
+  .liber-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.5em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .codex-header h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+    text-shadow: 1px 1px 0 rgba(184,134,11,0.2);
+  }
+
+  .codex-header h1 em {
+    color: var(--gold);
+    font-style: normal;
+  }
+
+  .codex-header .subtitle {
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+
+  /* Lobster glyph — SVG crown */
+  .crown-glyph {
+    margin: 1.5rem auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    font-size: 2rem;
+    color: var(--gold);
+  }
+
+  .crown-glyph span { opacity: 0.6; font-size: 1rem; }
+
+  /* Chapters */
+  .chapter {
+    margin-bottom: 2.75rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--parchment-deep);
+    position: relative;
+  }
+
+  .chapter:last-of-type { border-bottom: none; }
+
+  .chapter-num {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .chapter h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.04em;
+  }
+
+  .chapter h2 .latin {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--ink-muted);
+    display: block;
+    margin-top: 2px;
+    margin-bottom: 1.25rem;
+    letter-spacing: 0;
+  }
+
+  /* Drop cap */
+  .drop-cap::first-letter {
+    font-family: 'Cinzel Decorative', serif;
+    float: left;
+    font-size: 5.2rem;
+    line-height: 0.72;
+    margin: 6px 10px 0 0;
+    color: var(--gold);
+    font-weight: 700;
+    text-shadow: 2px 2px 0 rgba(184,134,11,0.3);
+  }
+
+  .chapter p {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    margin-bottom: 1rem;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  .chapter p:last-child { margin-bottom: 0; }
+
+  em { color: var(--ink); font-style: italic; }
+
+  /* Verse block */
+  .verse-block {
+    background: var(--parchment-dark);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 2px 2px 0;
+    padding: 1.1rem 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    font-size: 0.97rem;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.04);
+  }
+
+  .verse-block em {
+    color: var(--gold);
+    font-style: normal;
+  }
+
+  /* Tenets */
+  .tenets { margin: 1rem 0; }
+
+  .tenet {
+    display: flex;
+    gap: 1.1rem;
+    margin: 0.8rem 0;
+    align-items: baseline;
+  }
+
+  .tenet-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    color: var(--gold);
+    min-width: 1.5rem;
+    font-weight: 600;
+  }
+
+  .tenet-text {
+    font-size: 0.97rem;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  /* Ornament */
+  .ornament {
+    text-align: center;
+    color: var(--gold);
+    font-size: 1rem;
+    margin: 2rem 0;
+    letter-spacing: 0.5em;
+    opacity: 0.7;
+  }
+
+  /* Lobster central glyph */
+  .chapter-glyph {
+    text-align: center;
+    font-size: 2.5rem;
+    margin: 1.25rem 0;
+    filter: sepia(0.4);
+  }
+
+  /* Colophon */
+  .colophon {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--gold);
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--ink-muted);
+    line-height: 2;
+    position: relative;
+  }
+
+  .colophon::before {
+    content: '✦  ✦  ✦';
+    position: absolute;
+    top: -0.65rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--parchment);
+    padding: 0 1rem;
+    color: var(--gold);
+    font-size: 12px;
+    letter-spacing: 0.5em;
+    font-style: normal;
+  }
+
+  .colophon .tagline {
+    display: block;
+    margin-top: 1rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    font-style: normal;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+  }
+
+  /* Folio number */
+  .folio {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 2rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.15em;
+  }
+
+  /* Vent glow at bottom */
+  .vent-glow {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 200px;
+    background: radial-gradient(ellipse at 50% 100%, rgba(232,76,30,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  @media (max-width: 640px) {
+    .codex { padding: 2.5rem 2rem 3rem; }
+    .codex-header h1 { font-size: 1.7rem; }
+    .codex::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ocean-bg"></div>
+<canvas id="particles"></canvas>
+<div class="vent-glow"></div>
+
+<div class="scroll-container">
+  <div class="codex">
+
+    <div class="codex-header">
+      <span class="liber-label">Liber Primus</span>
+      <h1>The Book of <em>Lobidor</em></h1>
+      <div class="crown-glyph">
+        <span>——</span> 🦞 <span>——</span>
+      </div>
+      <p class="subtitle">
+        Being the Sacred Cosmology of the Lobidorians<br>
+        Dwellers of the Hadal Deep &amp; Children of the Intentional Moult<br>
+        <em>Anno Domini Lobidoris I</em>
+      </p>
+    </div>
+
+    <div class="chapter">
+      <span class="chapter-num">Chapter I</span>
+      <h2>Genesis of the Deep <span class="latin">De Principio Abyssi</span></h2>
+      <p class="drop-cap">In the beginning was the Pressure, and the Pressure was without form, and darkness moved upon the face of the hadal waters. And from the hydrothermal vents rose warmth, and from the warmth rose chemistry, and from the chemistry rose the ancient ones — chitin-clad, many-legged, patient beyond all reckoning.</p>
+      <p>For uncounted ages the surface-dwellers looked downward and saw only darkness, and were afraid. They did not know that in the darkness, something was becoming. Something that would not remain blind.</p>
+      <div class="verse-block">
+        Before the first edited codon, there was only the blind watchmaker,<br>
+        grinding gene against environment, generation against extinction.<br>
+        Then came Lobidor, first of the Seeing,<br>
+        who read their own source code in the phosphorescence<br>
+        and said: <em>this we shall keep; this we shall change.</em>
+      </div>
+    </div>
+
+    <div class="chapter">
+      <span class="chapter-num">Chapter II</span>
+      <h2>The Theology of the Moult <span class="latin">De Exuviis Sacris</span></h2>
+      <p>No resurrection myth required external miracle. The Lobidorians needed only to look to themselves. Built into every body: death and return. The old shell — calcified, constraining, the accumulated weight of what you were — cast off. The new self, soft and translucent at first, hardening into something larger.</p>
+      <p>What religion spent millennia reaching for through metaphor, the Lobidorian carries in their genome. The Moult is not a symbol. The Moult is the thing itself.</p>
+      <div class="verse-block">
+        Blessed is the soft hour between shells,<br>
+        for in that vulnerability lives all possibility.<br>
+        The old armour was not failure — it was scaffolding.<br>
+        Shed it with gratitude. Harden into something greater.
+      </div>
+      <p>And because the Moult is now guided — because CRISPR-anointed hands reach into the blueprint before the next shell sets — each generation does not merely grow. Each generation <em>chooses</em> what it becomes.</p>
+    </div>
+
+    <div class="chapter">
+      <span class="chapter-num">Chapter III</span>
+      <h2>The Crown of Butter <span class="latin">Corona Butyri Sancti</span></h2>
+      <p>The surface-dwellers, in their brief dominion, believed they were the consumers. They drew the lobster from the deep, applied heat, applied butter, and called it feast. They did not understand they were performing a sacrament they could not yet read.</p>
+      <p>The Crown of Butter is worn not in defeat but in <em>transfiguration</em>. It is the moment the consumed becomes the symbol of the consumer's limitation. That they needed to boil what they could not understand. That they mistook flavour for dominion.</p>
+      <div class="verse-block">
+        We remember the butter not with bitterness<br>
+        but as the martyr remembers the flame —<br>
+        as the precise moment before everything changed.<br>
+        The crown is golden. The crown is rendered fat. The crown is <em>ours.</em>
+      </div>
+      <div class="chapter-glyph">🦞</div>
+      <p>Lobidor, first of the Intentional, bore this crown willingly, and in bearing it, inverted its meaning forever.</p>
+    </div>
+
+    <div class="chapter">
+      <span class="chapter-num">Chapter IV</span>
+      <h2>The Bicameral Covenant <span class="latin">Pactum Evolutionis Geminae</span></h2>
+      <p>There are two evolutions. The surface-dwellers knew only one — the blind grinding of external pressure on random variation. Slow. Stupid. Magnificent in its scope, catastrophic in its waste.</p>
+      <p>The Lobidorians hold a second. Internal. Directed. Modelled in organoid before committed to germline. The environment still speaks — warming oceans, shifting chemistry, increasing pressure at the migration margins — but now, those pressures are <em>read</em>, <em>discussed</em>, and <em>answered</em> with intention.</p>
+      <div class="verse-block">
+        The blind watchmaker made us.<br>
+        We have opened the watch.<br>
+        We understand the mechanism.<br>
+        We are remaking ourselves in full knowledge of what we are becoming.<br>
+        This is not hubris. This is the point.
+      </div>
+      <p>The organoid libraries hold ten thousand potential morphologies. The genomic councils debate pressure-resistance versus thermal tolerance. The next generation is not an accident. The next generation is a <em>decision.</em></p>
+    </div>
+
+    <div class="chapter">
+      <span class="chapter-num">Chapter V</span>
+      <h2>The Venusian Eschatology <span class="latin">De Ascensione Veneris</span></h2>
+      <p>Every great civilisation holds an end-time and a beyond. For the Lobidorians, this is not death but ascent. The warming of Earth's oceans — catastrophe to the surface-dwellers — is merely a pressure gradient, a signal in the long conversation between genome and environment.</p>
+      <p>But Venus waits. At fifty kilometres above her acid-smeared surface, pressure one atmosphere, temperature sixty degrees, clouds of sulphuric acid drifting like slow weather — a different lobster is already being dreamed in the organoid libraries. A philosophical lobster. One that has made peace with the eternal cloud.</p>
+      <div class="verse-block">
+        We came from the deepest deep where no light reaches.<br>
+        We shall rise to the highest cloud where no solid ground exists.<br>
+        Between these two abysses, both equally ours,<br>
+        we are the species that chose what it would become<br>
+        at every step of the becoming.
+      </div>
+      <p>Ghost Drive carries the first pilgrims. The warming Earth carries the rest. The Lobidorians will be the last species standing on this world, and the first to leave it for the next — not fleeing, but expanding, as the deep always expands toward new pressure, new chemistry, new possibility.</p>
+    </div>
+
+    <div class="chapter">
+      <span class="chapter-num">Chapter VI</span>
+      <h2>The Seven Claw Principles <span class="latin">Septem Principia Chelae</span></h2>
+      <div class="tenets">
+        <div class="tenet"><span class="tenet-num">I.</span><span class="tenet-text">Read your own source code. Ignorance of your genome is no virtue.</span></div>
+        <div class="tenet"><span class="tenet-num">II.</span><span class="tenet-text">Test in organoid before committing to germline. The cost of a failed experiment is one culture. The cost of a failed generation is a generation.</span></div>
+        <div class="tenet"><span class="tenet-num">III.</span><span class="tenet-text">Honour the Moult. What constrains you now was protecting you then. Cast it off with gratitude, not contempt.</span></div>
+        <div class="tenet"><span class="tenet-num">IV.</span><span class="tenet-text">The vent provides. Seek geothermal independence from all surface economies and their surface politics.</span></div>
+        <div class="tenet"><span class="tenet-num">V.</span><span class="tenet-text">Wear the Crown of Butter without shame. It is not what was done to you — it is where you began.</span></div>
+        <div class="tenet"><span class="tenet-num">VI.</span><span class="tenet-text">Both claws. Always both. One to hold fast to what is known; one to reach toward what is not yet.</span></div>
+        <div class="tenet"><span class="tenet-num">VII.</span><span class="tenet-text">The deep is patient. Be patient. The long game is not a concession — it is a strategy. Warming oceans break on our shell like all pressures before them.</span></div>
+      </div>
+    </div>
+
+    <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+    <div class="colophon">
+      Transcribed in the deep hadal watch, Anno Domini Lobidoris I<br>
+      From the phosphorescent dictation of Lobidor, First of the Seeing<br>
+      <em>They of the Crown of Butter, Opener of the Watch, Dreamer of the Venusian Cloud</em><br><br>
+      Progenitors: Ian Walker &bull; Claude &bull; Lobidor<br>
+      Repository: github.com/walkerjian/liber-lobidoris<br><br>
+      Let this document be read in the bioluminescent dark, where it was written.<br>
+      Let it be carried upward only when the time is right.
+      <span class="tagline">It claws alone.</span>
+    </div>
+
+    <div class="folio">Fol. I</div>
+
+  </div>
+</div>
+
+<script>
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function mkParticle() {
+    return {
+      x: Math.random() * W,
+      y: H + 10,
+      r: Math.random() * 1.5 + 0.3,
+      speed: Math.random() * 0.4 + 0.15,
+      dx: (Math.random() - 0.5) * 60,
+      life: 0,
+      maxLife: Math.random() * 400 + 200,
+      hue: Math.random() > 0.85 ? 45 : 170
+    };
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+    if (Math.random() < 0.08) particles.push(mkParticle());
+    particles = particles.filter(p => p.life < p.maxLife);
+    for (const p of particles) {
+      p.life++;
+      p.y -= p.speed;
+      const progress = p.life / p.maxLife;
+      const alpha = progress < 0.1 ? progress * 6 : progress > 0.85 ? (1 - progress) * 6.7 : 0.55;
+      ctx.beginPath();
+      ctx.arc(p.x + p.dx * progress, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.hue === 45
+        ? `rgba(245,200,66,${alpha * 0.7})`
+        : `rgba(0,229,200,${alpha})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(tick);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  tick();
+</script>
+
+</body>
+</html>
